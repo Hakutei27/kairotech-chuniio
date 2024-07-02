@@ -1,36 +1,56 @@
 
 # KairoTech ChuniIO
 
-Updated on 2024/5/26
+Updated on 2024/7/2
 
 ## Features
 - Basic Features
-- Supports hot swapping and will not cause game timeout
-## How To Use
-### For Customers:
+- Supports hot-plug and won't cause game timeout
+## For Customers:
 Add the following text to segatools.ini
 
 [chuniio]  
 path=KairoTech.dll
 
-### For Producter
+## For Producter
 
-- Please be sure that your VID is 0x303A and your PID is 0x81F7.
-- If your HID device has only one report, the LED function will be disabled, please set all led's color by yourself.
+- Please be sure that your Vendor ID is `0x303A` and your Product ID is `0x81F7`.
+- If your HID device has only one report, the LED function will be disabled.
 
-#### Communication
-- This library use raw USB HID for communicating, datas has 2 section, the first section is datas from controller to game, the communication content is like this:
+## Communication
+- This library use raw USB HID for communicating.
 
+### Controller -> Game
+
+- Raw HID Data
+```
     01 00 00 00 00 00 00 00  
     00 00 00 00 00 00 00 00  
     00 00 00 00 00 00 00 00  
     00 00 00 00 00 00 00 00  
     00 00
+```
+- Struct
+
+```
+struct
+{
+    unsigned char reportID;
+    uint8_t touchValue[32];
+    uint8_t ir;
+    uint8_t state;
+};
+```
     
-    The first byte is reportID, this byte is always be 0x01, you don't need to change this.The following 32 bytes are touch value, from 入力１(touch1) to 入力３２(touch32).The last byte is a union of 6 air-strings and test, service button, the 1st-6th bits are 6 air-strings, the 7th bit is test and the 8th bit is service.
+- `reportID` is 0x01, don't change this.
+- `touchValue` are touch values from 入力１(touch1) to 入力３２(touch32).
+- `ir` is 6 air-string's data, only 6 bit are used.
+- `state` is test, service and coin button, only 3 bit are used.
 
-- The second section is datas from game to controller, the communication content is like this:
-
+### Game -> Controller
+#### Package 1 (Touch Area Light Package)
+- Raw HID Data
+```
     02 00 00 00 00 00 00 00  
     00 00 00 00 00 00 00 00  
     00 00 00 00 00 00 00 00  
@@ -38,15 +58,39 @@ path=KairoTech.dll
     00 00 00 00 00 00 00 00  
     00 00 00 00 00 00 00 00  
     00
-    
-    The first byte is reportID, this byte is always be 0x02, you don't need to change this.The following 48 bytes is the slider's led data, per led has 3 bytes of data contains R, G and B, you need to notice that this data pack has no led data of splits,led data of splits has another data pack like this: 
+```
+- Struct
+```
+struct
+{
+    unsigned char reportID;
+    uint8_t rgb[48];
+};
+```
 
-    03 00 00 00 00 00 00 00  
+- `reportID` is 0x02, don't change this.
+- `rgb` are r,g,b values for 16 lights.
+
+#### Package 2 (Split Area Light Package)
+
+- Raw HID Data
+```
+    02 00 00 00 00 00 00 00  
     00 00 00 00 00 00 00 00  
     00 00 00 00 00 00 00 00  
     00 00 00 00 00 00 00 00  
     00 00 00 00 00 00 00 00  
     00 00 00 00 00 00 00 00  
     00
+```
+- Struct
+```
+struct
+{
+    unsigned char reportID;
+    uint8_t rgb[45];
+};
+```
 
-    It's same with data pack 02
+- `reportID` is 0x03, don't change this.
+- `rgb` are r,g,b values for 15 lights (split between 2 touch area).
