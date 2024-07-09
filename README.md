@@ -65,32 +65,10 @@ struct
 {
     unsigned char reportID;
     uint8_t rgb[48];
+    uint8_t select;
 };
 ```
 
 - `reportID` is 0x02, don't change this.
 - `rgb` are r,g,b values for 16 lights.
-
-#### Package 2 (Split Area Light Package)
-
-- Raw HID Data
-```
-    02 00 00 00 00 00 00 00  
-    00 00 00 00 00 00 00 00  
-    00 00 00 00 00 00 00 00  
-    00 00 00 00 00 00 00 00  
-    00 00 00 00 00 00 00 00  
-    00 00 00 00 00 00 00 00  
-    00
-```
-- Struct
-```
-struct
-{
-    unsigned char reportID;
-    uint8_t rgb[45];
-};
-```
-
-- `reportID` is 0x03, don't change this.
-- `rgb` are r,g,b values for 15 lights (split between 2 touch area).
+- `select` is package select byte, if this value is not 0x00, rgb data will be splits' lights(only 15 led work, last led is reserved).
