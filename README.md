@@ -1,7 +1,7 @@
 
 # KairoTech ChuniIO
 
-Updated on 2024/7/2
+Updated on 2024/7/10
 
 ## Features
 - Basic Features
@@ -48,7 +48,6 @@ struct
 - `state` is test, service and coin button, only 3 bit are used.
 
 ### Game -> Controller
-#### Package 1 (Touch Area Light Package)
 - Raw HID Data
 ```
     02 00 00 00 00 00 00 00  
