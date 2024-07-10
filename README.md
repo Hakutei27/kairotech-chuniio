@@ -69,5 +69,7 @@ struct
 ```
 
 - `reportID` is 0x02, don't change this.
-- `rgb` are r,g,b values for 16 lights.
-- `select` is package select byte, if this value is not 0x00, rgb data will be splits' lights(only 15 led work, last led is reserved).
+#### If `select` is 0x00
+- `rgb` are r,g,b values for 16 touch area lights.
+#### If `select` is 0xFF
+- `rgb` are r,g,b values for 15 splits lights and 1 air light.
