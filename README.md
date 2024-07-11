@@ -1,7 +1,7 @@
 
 # KairoTech ChuniIO
 
-Updated on 2024/7/10
+Updated on 2024/7/12
 
 ## Features
 - Basic Features
@@ -63,13 +63,17 @@ struct
 struct
 {
     unsigned char reportID;
-    uint8_t rgb[48];
-    uint8_t select;
+    unsigned char packageID;
+    union
+    {
+        uint8_t sliderled[48];      // packageID 0x00, touch led
+        uint8_t splitled[45];       // packageID 0x01, split led
+        uint8_t airled[18];         // packageID 0x02, air led
+        uint8_t billboardled[60];   // packageID 0x03-0x08, billboard led
+    };
 };
 ```
 
 - `reportID` is 0x02, don't change this.
-#### If `select` is 0x00
-- `rgb` are r,g,b values for 16 touch area lights.
-#### If `select` is 0xFF
-- `rgb` are r,g,b values for 15 splits lights and 1 air light.
+- LED data has 3 channel, so 1 led data need 3 byte, like 'r g b r g b r g b'.
+- LED data will NOT transfer all the time, it only transfer when led data changed.For example, when air led data changed, a package that packageID is 0x02 will be transferd.
